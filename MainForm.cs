@@ -190,12 +190,12 @@ namespace DotNetRuntimeInstaller
             {
                 var (version, productCode) = toRemove[i];
                 string uninstallCmd = null;
-                foreach (var path in new[] {
-                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
-                    "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" })
+                foreach (var view in Environment.Is64BitOperatingSystem
+                    ? new[] { RegistryView.Registry64, RegistryView.Registry32 }
+                    : new[] { RegistryView.Registry32 })
                 {
-                    using var key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64)
-                                               .OpenSubKey(path + "\\" + productCode.Trim('{', '}'));
+                    using var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+                    using var key = baseKey.OpenSubKey($"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{productCode}");
                     uninstallCmd = key?.GetValue("UninstallString") as string;
                     if (!string.IsNullOrEmpty(uninstallCmd)) break;
                 }
@@ -231,14 +231,14 @@ namespace DotNetRuntimeInstaller
         private IEnumerable<(string Version, string ProductCode)> GetInstalledDotNetRuntimes()
         {
             var list = new List<(string, string)>();
-            string[] registryPaths = {
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
-                "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall" };
+            RegistryView[] views = Environment.Is64BitOperatingSystem
+                ? new[] { RegistryView.Registry64, RegistryView.Registry32 }
+                : new[] { RegistryView.Registry32 };
 
-            foreach (var path in registryPaths)
+            foreach (var view in views)
             {
-                using var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-                using var uninstallKey = baseKey.OpenSubKey(path);
+                using var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+                using var uninstallKey = baseKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
                 if (uninstallKey == null) continue;
                 foreach (var sub in uninstallKey.GetSubKeyNames())
                 {
