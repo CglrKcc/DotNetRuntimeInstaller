@@ -166,10 +166,11 @@ def download_and_install(version, arch):
     finally:
         progress.pack_forget()
         window.update()
-        try:
-            shutil.rmtree(temp_dir)
-        except Exception as e:
-            log_error(f"Temp klasörü silinemedi: {e}")
+        if temp_dir and os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception as e:
+                log_error(f"Temp klasörü silinemedi: {e}")
 
 def install_embedded_program(name, base64_data, filetype="exe"):
     try:
