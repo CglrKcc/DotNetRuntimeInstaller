@@ -125,6 +125,7 @@ def update_animation():
 
 def download_and_install(version, arch):
     global status_label
+    temp_dir = None
     try:
         status_label.configure(text=f"Sürüm kontrol ediliyor...")
         window.update()
@@ -166,12 +167,14 @@ def download_and_install(version, arch):
     finally:
         progress.pack_forget()
         window.update()
-        try:
-            shutil.rmtree(temp_dir)
-        except Exception as e:
-            log_error(f"Temp klasörü silinemedi: {e}")
+        if temp_dir and os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception as e:
+                log_error(f"Temp klasörü silinemedi: {e}")
 
 def install_embedded_program(name, base64_data, filetype="exe"):
+    temp_dir = None
     try:
         status_label.configure(text=f"{name} yükleniyor...")
         window.update()
@@ -196,10 +199,11 @@ def install_embedded_program(name, base64_data, filetype="exe"):
         log_error(f"{name} kurulumu hatası: {e}")
     finally:
         window.update()
-        try:
-            shutil.rmtree(temp_dir)
-        except Exception as e:
-            log_error(f"{name} temp klasörü silinemedi: {e}")
+        if temp_dir and os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception as e:
+                log_error(f"{name} temp klasörü silinemedi: {e}")
 
 cpp_silent_params = {
     "2005": ["/q", "/norestart"],
@@ -219,6 +223,7 @@ def get_cpp_params(title, silent):
     return cpp_silent_params.get(version, ["/quiet", "/norestart"])
 
 def install_online_program(name, url, extra_params=None):
+    temp_dir = None
     try:
         status_label.configure(text=f"{name} indiriliyor...")
         window.update()
@@ -243,10 +248,11 @@ def install_online_program(name, url, extra_params=None):
         log_error(f"{name} online kurulum hatası: {e}")
     finally:
         window.update()
-        try:
-            shutil.rmtree(temp_dir)
-        except Exception as e:
-            log_error(f"{name} temp klasörü silinemedi: {e}")
+        if temp_dir and os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception as e:
+                log_error(f"{name} temp klasörü silinemedi: {e}")
 
 def gui_main():
     global silent_var, runtime_display_frame, progress, window, status_label, animation_label, loading_images, scale, bottom_frame
