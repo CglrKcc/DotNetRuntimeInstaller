@@ -107,12 +107,12 @@ class InstallerApp(ctk.CTk):
 
         # --- C++ Ayarları ---
         self.cpp_versions = [
-            {"year": "2005", "search_key": "2005", "url_x86": "https://download.microsoft.com/download/8/b/4/8b42259f-5d70-43f4-ac2e-4b208fd8d66a/vcredist_x86.EXE", "url_x64": "https://download.microsoft.com/download/8/b/4/8b42259f-5d70-43f4-ac2e-4b208fd8d66a/vcredist_x64.EXE"},
-            {"year": "2008", "search_key": "2008", "url_x86": "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"},
-            {"year": "2010", "search_key": "2010", "url_x86": "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"},
-            {"year": "2012", "search_key": "2012", "url_x86": "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"},
-            {"year": "2013", "search_key": "2013", "url_x86": "https://aka.ms/highdpimfc2013x86enu", "url_x64": "https://aka.ms/highdpimfc2013x64enu"},
-            {"year": "2015-2022", "search_key": "2015-2022", "url_x86": "https://aka.ms/vs/17/release/vc_redist.x86.exe", "url_x64": "https://aka.ms/vs/17/release/vc_redist.x64.exe"},
+            {"year": "2005", "search_key": "2005", "url_x86": "https://download.microsoft.com/download/8/b/4/8b42259f-5d70-43f4-ac2e-4b208fd8d66a/vcredist_x86.EXE", "url_x64": "https://download.microsoft.com/download/8/b/4/8b42259f-5d70-43f4-ac2e-4b208fd8d66a/vcredist_x64.EXE", "tooltip": "Bu sürüm artık Microsoft tarafından güncellenmemektedir.\nSadece eski uygulamalar için gereklidir."},
+            {"year": "2008", "search_key": "2008", "url_x86": "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe", "tooltip": "Bu sürüm artık Microsoft tarafından güncellenmemektedir.\nSadece eski uygulamalar için gereklidir."},
+            {"year": "2010", "search_key": "2010", "url_x86": "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe", "tooltip": "Bu sürüm artık Microsoft tarafından güncellenmemektedir.\nSadece eski uygulamalar için gereklidir."},
+            {"year": "2012", "search_key": "2012", "url_x86": "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe", "url_x64": "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe", "tooltip": "Bu sürüm artık Microsoft tarafından güncellenmemektedir.\nSadece eski uygulamalar için gereklidir."},
+            {"year": "2013", "search_key": "2013", "url_x86": "https://aka.ms/highdpimfc2013x86enu", "url_x64": "https://aka.ms/highdpimfc2013x64enu", "tooltip": "Bu sürüm artık Microsoft tarafından güncellenmemektedir.\nSadece eski uygulamalar için gereklidir."},
+            {"year": "2015-2022", "search_key": "2015-2022", "url_x86": "https://aka.ms/vs/17/release/vc_redist.x86.exe", "url_x64": "https://aka.ms/vs/17/release/vc_redist.x64.exe", "tooltip": "Tüm modern uygulamalar için gerekli olan kümülatif paket.\nPeriyodik olarak güncellenir."},
         ]
 
         # --- UI Elementlerini Saklamak İçin Konteynerler ---
@@ -142,6 +142,7 @@ class InstallerApp(ctk.CTk):
         self.run_full_scan()
 
     def run_full_scan(self):
+        """Tüm runtime'lar için tarama ve UI güncelleme işlemlerini başlatır."""
         threading.Thread(target=self.fetch_all_latest_versions, daemon=True).start()
         threading.Thread(target=self.refresh_cpp_ui, daemon=True).start()
 
@@ -271,7 +272,7 @@ class InstallerApp(ctk.CTk):
         note3_text = "• Bir sorunla karşılaşırsanız veya listede olmayan bir yazılıma ihtiyaç duyarsanız, lütfen IT Departmanı ile iletişime geçin."
         ctk.CTkLabel(notes_frame, text=note3_text, wraplength=550, justify="left", anchor="w").grid(row=3, column=0, pady=(5, 15), padx=20, sticky="w")
 
-    def _populate_runtime_frame(self, parent_frame, title, versions_data, ui_elements_dict, refresh_command):
+    def _populate_runtime_frame(self, parent_frame, title, refresh_command):
         parent_frame.grid_rowconfigure(0, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
         
@@ -288,23 +289,27 @@ class InstallerApp(ctk.CTk):
         return refresh_button, scroll_frame
 
     def _populate_dotnet_frame(self):
-        self.dotnet_refresh_button, scroll_frame = self._populate_runtime_frame(self.dotnet_frame, ".NET Runtimes", self.dotnet_versions_to_check, self.dotnet_ui_elements, self.run_full_scan)
+        self.dotnet_refresh_button, scroll_frame = self._populate_runtime_frame(self.dotnet_frame, ".NET Runtimes", self.run_full_scan)
         
         for version in self.dotnet_versions_to_check:
             self.dotnet_ui_elements[version] = self._create_runtime_card(scroll_frame, f".NET {version}", version, "dotnet")
 
     def _populate_cpp_frame(self):
-        self.cpp_refresh_button, scroll_frame = self._populate_runtime_frame(self.cpp_frame, "Visual C++ Runtimes", self.cpp_versions, self.cpp_ui_elements, self.run_full_scan)
+        self.cpp_refresh_button, scroll_frame = self._populate_runtime_frame(self.cpp_frame, "Visual C++ Runtimes", self.run_full_scan)
 
         for version_info in self.cpp_versions:
             year = version_info["year"]
-            self.cpp_ui_elements[year] = self._create_runtime_card(scroll_frame, f"Visual C++ {year}", year, "cpp")
+            tooltip_text = version_info["tooltip"]
+            self.cpp_ui_elements[year] = self._create_runtime_card(scroll_frame, f"Visual C++ {year}", year, "cpp", tooltip_text)
 
-    def _create_runtime_card(self, parent, display_name, version_key, runtime_type):
+    def _create_runtime_card(self, parent, display_name, version_key, runtime_type, tooltip_text=None):
         elements = {}
         card = ctk.CTkFrame(parent, fg_color="#2b2b2b")
         card.pack(fill="x", padx=20, pady=10)
         card.grid_columnconfigure(1, weight=1)
+        
+        if tooltip_text:
+            Tooltip(card, tooltip_text)
         
         ctk.CTkLabel(card, text=display_name, font=ctk.CTkFont(size=16, weight="bold")).grid(row=0, column=0, rowspan=2, padx=20, pady=20)
         
@@ -319,7 +324,8 @@ class InstallerApp(ctk.CTk):
             elements[f"install_{arch}"] = ctk.CTkButton(actions_frame, text=f"Kur ({arch})", width=100, command=install_cmd)
             elements[f"install_{arch}"].pack(side="left", padx=5)
             
-            elements[f"uninstall_{arch}"] = ctk.CTkButton(actions_frame, text="Kaldır", width=60, fg_color="#C0392B", hover_color="#A93226")
+            uninstall_cmd = lambda v=version_key, a=arch: self.run_threaded_task(self.uninstall_runtime, runtime_type, v, a)
+            elements[f"uninstall_{arch}"] = ctk.CTkButton(actions_frame, text="Kaldır", width=60, fg_color="#C0392B", hover_color="#A93226", command=uninstall_cmd)
             elements[f"uninstall_{arch}"].pack(side="left", padx=5)
         
         return elements
@@ -404,10 +410,7 @@ class InstallerApp(ctk.CTk):
         threading.Thread(target=task_wrapper, daemon=True).start()
 
     def scan_installed_programs(self, search_patterns):
-        installed = {}
-        for key in search_patterns:
-            installed[key] = {"x64": None, "x86": None}
-
+        installed = {key: {"x64": None, "x86": None} for key in search_patterns}
         uninstall_key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
         access_masks = {"x64": winreg.KEY_READ | winreg.KEY_WOW64_64KEY, "x86": winreg.KEY_READ | winreg.KEY_WOW64_32KEY}
 
@@ -425,8 +428,6 @@ class InstallerApp(ctk.CTk):
                                         break
                         except (OSError, FileNotFoundError):
                             continue
-            except FileNotFoundError:
-                self.log_error(f"Kayıt defteri yolu bulunamadı: {uninstall_key_path} ({arch})")
             except Exception as e:
                 self.log_error(f"Kayıt defteri okunurken hata ({arch}): {e}")
         return installed
@@ -462,11 +463,10 @@ class InstallerApp(ctk.CTk):
                                     
                             self.latest_dotnet_versions[major_version] = version_data
                     except (requests.exceptions.RequestException, json.JSONDecodeError, KeyError, IndexError) as e:
-                        self.log_error(f"{major_version} için en son sürüm alınamadı: {e}")
+                        self.log_error(f".NET {major_version} için sürüm alınamadı: {e}")
             self.log_message(".NET sürüm bilgileri başarıyla alındı.", "success")
         except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
             self.log_message(".NET sürüm bilgileri alınamadı. İnternet bağlantınızı kontrol edin.", "error")
-            self.log_error(f"Ana .NET sürüm indeksi alınamadı: {e}")
         
         self.after(0, self.refresh_dotnet_ui)
 
@@ -487,7 +487,6 @@ class InstallerApp(ctk.CTk):
 
                 if installed_name:
                     installed_version_str = ''.join(filter(lambda x: x.isdigit() or x == '.', installed_name.split(' - ')[-1]))
-                    uninstall_button.configure(command=lambda n=installed_name, a=arch: self.run_threaded_task(self.uninstall_program, n, a))
                     uninstall_button.pack(side="left", padx=5)
                     
                     if latest_version and parse_version(installed_version_str) < parse_version(latest_version):
@@ -509,7 +508,10 @@ class InstallerApp(ctk.CTk):
         search_patterns = {v["year"]: [f"c++ {v['search_key']} redistributable"] for v in self.cpp_versions}
         installed_programs = self.scan_installed_programs(search_patterns)
 
-        for version_key, elements in self.cpp_ui_elements.items():
+        for version_info in self.cpp_versions:
+            version_key = version_info["year"]
+            elements = self.cpp_ui_elements[version_key]
+            
             for arch in ["x64", "x86"]:
                 installed_name = installed_programs.get(version_key, {}).get(arch)
                 
@@ -519,12 +521,15 @@ class InstallerApp(ctk.CTk):
 
                 if installed_name:
                     status_label.configure(text="Kurulu", text_color="#00ff88")
-                    install_button.configure(state="disabled", text="Kurulu")
-                    uninstall_button.configure(command=lambda n=installed_name, a=arch: self.run_threaded_task(self.uninstall_program, n, a))
                     uninstall_button.pack(side="left", padx=5)
+                    
+                    if version_key == "2015-2022":
+                        install_button.configure(text="Güncelle", fg_color="#E67E22", state="normal")
+                    else:
+                        install_button.configure(text="Kurulu", state="disabled")
                 else:
                     status_label.configure(text="Kurulu değil", text_color="gray60")
-                    install_button.configure(state="normal", text=f"Kur ({arch})")
+                    install_button.configure(text=f"Kur ({arch})", fg_color="#1F6AA5", state="normal")
                     uninstall_button.pack_forget()
         
         self.log_message("C++ taraması tamamlandı.", "success")
@@ -560,8 +565,17 @@ class InstallerApp(ctk.CTk):
         self.install_online_program(display_name, installer_url, params)
         self.after(500, self.run_full_scan)
 
-    def uninstall_program(self, display_name, arch):
-        self.log_message(f"{display_name} ({arch}) kaldırılıyor...")
+    def uninstall_runtime(self, runtime_type, version_key, arch):
+        if runtime_type == "dotnet":
+            search_patterns = [f".NET Runtime - {version_key}."]
+            display_name_prefix = f".NET Runtime {version_key}"
+        elif runtime_type == "cpp":
+            search_patterns = [f"c++ {version_key} redistributable"]
+            display_name_prefix = f"Visual C++ {version_key}"
+        else:
+            return
+
+        self.log_message(f"{display_name_prefix} ({arch}) kaldırılıyor...")
         access_mask = winreg.KEY_READ | (winreg.KEY_WOW64_64KEY if arch == 'x64' else winreg.KEY_WOW64_32KEY)
         uninstall_key_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
         uninstall_command = None
@@ -573,7 +587,7 @@ class InstallerApp(ctk.CTk):
                         subkey_name = winreg.EnumKey(key, i)
                         with winreg.OpenKey(key, subkey_name) as subkey:
                             reg_display_name = winreg.QueryValueEx(subkey, "DisplayName")[0]
-                            if reg_display_name.lower() == display_name.lower():
+                            if any(p.lower() in reg_display_name.lower() for p in search_patterns):
                                 uninstall_command = winreg.QueryValueEx(subkey, "UninstallString")[0]
                                 break
                     except (OSError, FileNotFoundError):
@@ -583,7 +597,7 @@ class InstallerApp(ctk.CTk):
             return
 
         if not uninstall_command:
-            self.log_message(f"{display_name} için kaldırma komutu bulunamadı.", "warning")
+            self.log_message(f"{display_name_prefix} için kaldırma komutu bulunamadı.", "warning")
             return
 
         try:
@@ -603,7 +617,7 @@ class InstallerApp(ctk.CTk):
 
             self.log_message(f"Kaldırma komutu çalıştırılıyor: {' '.join(command_parts)}", "info")
             subprocess.run(command_parts, check=True, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-            self.log_message(f"{display_name} başarıyla kaldırıldı.", "success")
+            self.log_message(f"{display_name_prefix} başarıyla kaldırıldı.", "success")
 
         except subprocess.CalledProcessError as e:
             error_output = e.stderr or e.stdout
